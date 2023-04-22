@@ -1,19 +1,10 @@
-
+import auth from "./auth/auth";
+import main from "./drugstore/main"
+import unknown from "./utils/unknown";
 const routes = [
-  {
-    path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
-  },
-
-  // Always leave this as last one,
-  // but you can also remove it
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
+  {...auth},
+  {...main},
+  {...unknown},
 ]
 
 export default routes

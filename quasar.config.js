@@ -12,8 +12,10 @@
 const ESLintPlugin = require('eslint-webpack-plugin')
 
 
-const { configure } = require('quasar/wrappers');
-
+const {configure} = require('quasar/wrappers');
+let JavaScriptObfuscator = require('webpack-obfuscator');
+CryptoJS = require('crypto-js')
+const hash = CryptoJS.MD5('lRt65a921bE7M4Sj8NQXz3u9vgfykdHJ').toString();
 module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli-webpack/supporting-ts
@@ -26,8 +28,14 @@ module.exports = configure(function (ctx) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-webpack/boot-files
     boot: [
-      
-      
+      "axios",
+      "encrypt",
+      "idle",
+      "moment",
+      "notify-defaults",
+      "validation-rules",
+      "version",
+      "fontawesome-pro",
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
@@ -37,6 +45,7 @@ module.exports = configure(function (ctx) {
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
+      "fontawesome-v5",
       // 'ionicons-v4',
       // 'mdi-v5',
       // 'fontawesome-v6',
@@ -51,33 +60,51 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build
     build: {
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: "history", // available values: 'hash', 'history'
+      env: {
+        API_URL: "http://localhost:8000/api",
+        ENCRYPT_CHANNEL: false,
+        VUE_ROUTER_MODE: "history",
+        ENCRYPT_KEY: hash
+      },
+      extendWebpack(cfg, {isServer, isClient}) {
+        if (!ctx.dev && !ctx.debug) {
+          cfg.plugins.push(
+            new JavaScriptObfuscator({
+              compact: true,
+              controlFlowFlattening: false,
+              deadCodeInjection: false,
+              debugProtection: false,
+              debugProtectionInterval: 0,
+              disableConsoleOutput: true,
+              identifierNamesGenerator: "hexadecimal",
+              log: false,
+              numbersToExpressions: false,
+              renameGlobals: false,
+              selfDefending: true,
+              simplify: true,
+              splitStrings: false,
+              stringArray: true,
+              stringArrayEncoding: [],
+              stringArrayIndexShift: true,
+              stringArrayRotate: true,
+              stringArrayShuffle: true,
+              stringArrayWrappersCount: 1,
+              stringArrayWrappersChainedCalls: true,
+              stringArrayWrappersParametersMaxCount: 2,
+              stringArrayWrappersType: "variable",
+              stringArrayThreshold: 0.75,
+              unicodeEscapeSequence: false,
+            })
+          );
+        }
+      },
 
-      // transpile: false,
-      // publicPath: '/',
-
-      // Add dependencies for transpiling with Babel (Array of string/regex)
-      // (from node_modules, which are by default not transpiled).
-      // Applies only if "transpile" is set to true.
-      // transpileDependencies: [],
-
-      // rtl: true, // https://quasar.dev/options/rtl-support
-      // preloadChunks: true,
-      // showProgress: false,
-      // gzip: true,
-      // analyze: true,
-
-      // Options below are automatically set depending on the env, set them if you want to override
-      // extractCSS: false,
-
-      // https://v2.quasar.dev/quasar-cli-webpack/handling-webpack
-      // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      
-      chainWebpack (chain) {
+      chainWebpack(chain) {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js', 'vue' ] }])
+          .use(ESLintPlugin, [{extensions: ['js', 'vue']}])
       }
-      
+
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-devServer
@@ -91,7 +118,21 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-framework
     framework: {
-      config: {},
+      config: {
+        dark: false,
+        loading: {
+          message: "Cargando",
+          spinner: "QSpinnerBars",
+        },
+        notify: {
+          position: "top-right",
+          html: true,
+          timeout: 3000,
+          actions: [{icon: "fal fa-times", color: "white"}],
+        },
+      },
+      iconSet: "material-icons", // Quasar icon set
+      lang: 'es',
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
@@ -104,7 +145,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: ["Loading", "Notify", "Dialog"],
     },
 
     // animations: 'all', // --- includes all animations
@@ -122,14 +163,14 @@ module.exports = configure(function (ctx) {
                       // (gets superseded if process.env.PORT is specified at runtime)
 
       maxAge: 1000 * 60 * 60 * 24 * 30,
-        // Tell browser when a file from the server should expire from cache (in ms)
+      // Tell browser when a file from the server should expire from cache (in ms)
 
-      
-      chainWebpackWebserver (chain) {
+
+      chainWebpackWebserver(chain) {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{extensions: ['js']}])
       },
-      
+
 
       middlewares: [
         ctx.prod ? 'compression' : '',
@@ -144,16 +185,16 @@ module.exports = configure(function (ctx) {
 
       // for the custom service worker ONLY (/src-pwa/custom-service-worker.[js|ts])
       // if using workbox in InjectManifest mode
-      
-      chainWebpackCustomSW (chain) {
+
+      chainWebpackCustomSW(chain) {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{extensions: ['js']}])
       },
-      
+
 
       manifest: {
-        name: `Quasar App`,
-        short_name: `Quasar App`,
+        name: `Súper Saucedo`,
+        short_name: `Su Sau`,
         description: `A Quasar Project`,
         display: 'standalone',
         orientation: 'portrait',
@@ -223,19 +264,18 @@ module.exports = configure(function (ctx) {
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      
-      chainWebpackMain (chain) {
-        chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
-      },
-      
 
-      
-      chainWebpackPreload (chain) {
+      chainWebpackMain(chain) {
         chain.plugin('eslint-webpack-plugin')
-          .use(ESLintPlugin, [{ extensions: [ 'js' ] }])
+          .use(ESLintPlugin, [{extensions: ['js']}])
       },
-      
+
+
+      chainWebpackPreload(chain) {
+        chain.plugin('eslint-webpack-plugin')
+          .use(ESLintPlugin, [{extensions: ['js']}])
+      },
+
     }
   }
 });
