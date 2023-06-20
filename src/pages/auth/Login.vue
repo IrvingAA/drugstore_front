@@ -3,7 +3,7 @@
     <q-header
       unelevated
       class="text-white"
-      style="background: #13322b"
+      style="background: #002b36"
       height-hint="61.59"
     >
       <q-toolbar class="q-py-sm q-px-md q-gutter-sm q-toolbar">

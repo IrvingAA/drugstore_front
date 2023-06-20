@@ -17,7 +17,7 @@ export async function login({ commit }, credentials) {
 			return false
 		}
 		sessionStorage.setItem('drugstore_token', response.data.session.token);
-		sessionStorage.setItem('spc_hash', response.data.session.hash);
+		sessionStorage.setItem('drugstore_hash', response.data.session.hash);
 
 		api.defaults.headers.common = {
 			Accept: 'application/json',
@@ -40,7 +40,7 @@ export async function login({ commit }, credentials) {
 
 export async function getUser({commit}) {
 
-	await api.get('user/' + sessionStorage.getItem('spc_hash')).then(res => {
+	await api.get('user/' + sessionStorage.getItem('drugstore_hash')).then(res => {
     if(res == undefined){
        api.post('logout').then(response => {
         Notify.create({
@@ -51,7 +51,7 @@ export async function getUser({commit}) {
         })
       })
        sessionStorage.removeItem('drugstore_token');
-       sessionStorage.removeItem('spc_hash');
+       sessionStorage.removeItem('drugstore_hash');
       let user = {
         username: null,
         email: null,
@@ -61,7 +61,7 @@ export async function getUser({commit}) {
       this.$router.push('/ingresar')
     }
 		if (res.data === '') {
-			sessionStorage.removeItem('spc_hash');
+			sessionStorage.removeItem('drugstore_hash');
 		} else {
 			commit('SET_USER', res.data.user)
 		}
@@ -84,7 +84,7 @@ export async function logout({ commit }) {
   })
 
 	await sessionStorage.removeItem('drugstore_token');
-	await sessionStorage.removeItem('spc_hash');
+	await sessionStorage.removeItem('drugstore_hash');
 
 	let user = {
 		username: null,

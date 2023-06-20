@@ -1,3 +1,5 @@
+import admin from '../admin/admin.js'
+
 export default {
   path: '/',
   component: () => import('layouts/MainLayout.vue'),
@@ -7,6 +9,9 @@ export default {
       path: '',
       component: () => import('pages/IndexPage.vue')
     },
+    {
+      ...admin
+    }
 
   ],
   beforeEnter: (to, from, next) => {

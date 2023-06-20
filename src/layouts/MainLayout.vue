@@ -3,11 +3,11 @@
     <q-header
       unelevated
       class="text-white"
-      style="background: #13322b"
+      style="background: #002b36"
       height-hint="61.59">
       <q-toolbar>
-        <q-toolbar-title >
-          <small style="font-size: 6pt"> {{ 'appVersionNumber' }}</small></q-toolbar-title>
+        <q-toolbar-title>
+          Farmacia Saucedo<small class="text-caption text-bold" style="font-size: 8pt; padding-left: 15px"> {{ appVersionNumber }}</small></q-toolbar-title>
         <q-item v-if="$q.screen.gt.sm">
           <q-item-section>
             <q-btn
@@ -40,8 +40,8 @@
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
-            <q-item-label>{{ '$store.state.authentication.user.fullName' }}</q-item-label>
-            <q-item-label class="text-white" caption lines="1">{{ '$store.state.authentication.user.officeName' }}
+            <q-item-label>{{ $store.state.authentication.user.full_name }}</q-item-label>
+            <q-item-label class="text-white" caption lines="1">{{ $store.state.authentication.user.profile.name }}
             </q-item-label>
           </q-item-section>
           <q-item-section>
@@ -65,10 +65,10 @@
         class="q-py-sm q-px-md q-gutter-sm q-toolbar--standard full-width">
         <q-item class="full-width">
           <q-item-section avatar class="full-width">
-            <q-item-label> {{ '$store.state.navigation.menu.pageTitle '}} <small
+            <q-item-label> {{ '$store.state.navigation.menu.pageTitle ' }} <small
               style="font-size: 6pt">{{ 'appVersionNumber' }}</small></q-item-label>
           </q-item-section>
-          <q-item-section avatar >
+          <q-item-section avatar>
             <q-avatar color="primary" text-color="white">
               <q-btn
                 no-caps
@@ -101,9 +101,9 @@
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
-            <q-item-label>{{ '$store.state.authentication.user.fullName' }} </q-item-label>
+            <q-item-label>{{ '$store.state.authentication.user.fullName' }}</q-item-label>
             <q-item-label style="font-size: 7pt !important;" class="text-white full-width" caption lines="1">
-              {{'$store.state.authentication.user.officeName'}}
+              {{ '$store.state.authentication.user.officeName' }}
             </q-item-label>
           </q-item-section>
           <q-item-section avatar>
@@ -142,6 +142,7 @@
       >
         <div>
 
+
         </div>
       </q-scroll-area>
     </q-drawer>
@@ -162,7 +163,7 @@
         "
       >
         <div>
-
+          <MenuComponent/>
         </div>
       </q-scroll-area>
     </q-drawer>
@@ -211,10 +212,12 @@ import {useRouter} from "vue-router";
 import {useRoute} from "vue-router";
 import {useStore} from "vuex";
 import _ from "lodash"
+import MenuComponent from "pages/partials/Menu.vue";
 
 export default defineComponent({
   name: 'MyLayout',
   components: {
+    MenuComponent
 
   },
 
@@ -223,7 +226,7 @@ export default defineComponent({
       return new Date().getFullYear();
     },
     appVersionNumber() {
-      return 'appVersion';
+      return appVersion;
     },
   },
 

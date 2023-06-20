@@ -1,1 +1,35 @@
 // app global css in SCSS form
+.subtitle-form {
+  font-weight: 600;
+  font-size: 25px;
+  line-height: 22px;
+  color: #002b36 !important;
+}
+
+
+#table-data tr {
+  height: 20px !important;
+}
+
+#table-data td {
+  font-size: 10pt;
+  max-width: 150px;
+  min-width: 50px;
+  white-space: normal;
+  text-align: center !important;
+  padding-bottom: 5px;
+}
+
+#table-data tr:nth-child(even){background-color: #f2f2f2;}
+
+#table-data tr:hover {background-color: #ddd;}
+
+#table-data th {
+  text-align: center;
+  color: white;
+  height: 40px;
+  font-weight: 700;
+  font-size: 12px;
+  background: #393C3E;
+  border: 1px white solid;
+}
